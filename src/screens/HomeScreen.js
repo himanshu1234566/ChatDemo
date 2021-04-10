@@ -1,34 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { List, Divider } from 'react-native-paper';
-import firestore from '@react-native-firebase/firestore';
-import Loading from '../components/Loading';
+import React, { useState, useEffect, useContext } from "react";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { List, Divider } from "react-native-paper";
+import firestore from "@react-native-firebase/firestore";
+import Loading from "../components/Loading";
 // import useStatsBar from '../utils/useStatusBar';
 
 export default function HomeScreen({ navigation }) {
-//   useStatsBar('light-content');
+  //   useStatsBar('light-content');
 
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { logout } = useContext(AuthContext);
 
   /**
    * Fetch threads from Firestore
    */
   useEffect(() => {
     const unsubscribe = firestore()
-      .collection('THREADS')
-      .orderBy('latestMessage.createdAt', 'desc')
-      .onSnapshot(querySnapshot => {
-        const threads = querySnapshot.docs.map(documentSnapshot => {
+      .collection("THREADS")
+      .orderBy("latestMessage.createdAt", "desc")
+      .onSnapshot((querySnapshot) => {
+        const threads = querySnapshot.docs.map((documentSnapshot) => {
           return {
             _id: documentSnapshot.id,
             // give defaults
-            name: '',
+            name: "",
 
             latestMessage: {
-              text: ''
+              text: "",
             },
-            ...documentSnapshot.data()
+            ...documentSnapshot.data(),
           };
         });
 
@@ -53,11 +54,11 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <FlatList
         data={threads}
-        keyExtractor={item => item._id}
+        keyExtractor={(item) => item._id}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate('Room', { thread: item })}
+            onPress={() => navigation.navigate("Room", { thread: item })}
           >
             <List.Item
               title={item.name}
@@ -70,19 +71,22 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity onPress={() => logout()}>
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f5f5f5',
-    flex: 1
+    backgroundColor: "#f5f5f5",
+    flex: 1,
   },
   listTitle: {
-    fontSize: 22
+    fontSize: 22,
   },
   listDescription: {
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
