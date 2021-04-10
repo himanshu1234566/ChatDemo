@@ -1,0 +1,6 @@
+module Pods_ChatDemo_ChatDemoTests {
+  umbrella header "Pods-ChatDemo-ChatDemoTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
